@@ -2,15 +2,15 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>⸸ Cryptic Slot ⸸</title>
+  <title>⸸ CloverMini ⸸</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <link rel="stylesheet" href="style.css">
-  <link rel="icon" href="https://em-content.zobj.net/source/microsoft-teams/363/slot-machine_1f3b0.png">
+  <link rel="icon" href="https://em-content.zobj.net/source/microsoft-teams/363/shamrock_2618-fe0f.png">
 </head>
 <body>
   <div id="game">
     <header>
-      <h1 class="logo-glitch">⸸ Cryptic Slot ⸸</h1>
+      <h1 class="logo-glitch">⸸ CloverMini ⸸</h1>
       <nav class="tabs">
         <button class="tab-btn" id="tab-slot" data-tab="slot">Slot</button>
         <button class="tab-btn" id="tab-shop" data-tab="shop">Shop</button>
@@ -19,6 +19,7 @@
       <div id="balances">
         <span>Coins: <span id="coin-balance">0</span></span>
         <span>Tickets: <span id="ticket-balance">0</span></span>
+        <span>Spins: <span id="spins-left">0</span></span>
         <span>Run: <span id="run-number">1</span></span>
         <span>Round: <span id="round-number">-</span>/3</span>
       </div>
@@ -29,12 +30,17 @@
       <section class="slot-main">
         <div class="slot-cabinet rundown">
           <div class="slot-header">
-            <span class="slot-title neon-flicker">CRYPTIC LINES</span>
+            <span class="slot-title neon-flicker">CLOVERMINI</span>
             <span class="slot-lights rundown-flicker"></span>
           </div>
           <div class="slot-window">
             <div id="slot-grid" class="slot-grid"></div>
             <div class="slot-glass-fx"></div>
+            <div id="spin-pack-panel" class="spin-pack-panel">
+              <div class="spin-pack-desc">Purchase spins to play:</div>
+              <button id="buy-pack-7" class="spin-pack-btn">7 spins <span class="pack-cost">7c</span></button>
+              <button id="buy-pack-4" class="spin-pack-btn">4 spins <span class="pack-cost">3c</span></button>
+            </div>
           </div>
           <div class="slot-controls">
             <button id="spin-btn" class="slot-spin-btn">Spin</button>

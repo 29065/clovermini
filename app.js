@@ -1,8 +1,7 @@
-// SYMBOLS, BUFFS, CHARMS as in previous code -- not repeated for brevity
-// ... (Insert SYMBOLS, BUFFS, CHARMS arrays here, unchanged from previous version)
-
+// SYMBOLS, BUFFS, CHARMS: use your existing arrays from previous code (unchanged)
+// --- Mechanics-specific variables ---
 const ROWS = 3, COLS = 5;
-const STARTING_COINS = 0;
+const STARTING_COINS = 15;
 const STARTING_TICKETS = 0;
 const ROUNDS_PER_RUN = 3;
 const REQUIREMENT_BASE = 50;
@@ -10,11 +9,19 @@ const REQUIREMENT_SCALE = 1.5;
 const TICKET_PER = 20;
 const INIT_RESTOCK_COST = 2;
 
+// --- Spin Pack Costs ---
+const PACKS = [
+  { spins: 7, cost: 7 },
+  { spins: 4, cost: 3 }
+];
+
+// --- State ---
 let gameState = {
   run: 1,
   round: 0,
   coins: STARTING_COINS,
   tickets: STARTING_TICKETS,
+  spins: 0,
   coinsDeposited: 0,
   requirement: 0,
   active: false,
@@ -28,13 +35,18 @@ let gameState = {
   restockCost: INIT_RESTOCK_COST,
   shopCharms: [],
   miracleUsed: false,
-  roundSpun: 0, // NEW: track spins this round
+  roundSpun: 0,
+  roundJustEnded: false, // for preventing double round end
 };
 
+let currentGrid = [];
+
+// DOM elements
 const runNumber = document.getElementById('run-number');
 const roundNumber = document.getElementById('round-number');
 const coinBalance = document.getElementById('coin-balance');
 const ticketBalance = document.getElementById('ticket-balance');
+const spinsLeft = document.getElementById('spins-left');
 const coinRequirement = document.getElementById('coin-requirement');
 const coinsDeposited = document.getElementById('coins-deposited');
 const statusDiv = document.getElementById('status');
@@ -56,7 +68,11 @@ const buffOptions = document.getElementById('buff-options');
 const phoneCallModal = document.getElementById('phone-call-modal');
 const finishEarlyBtn = document.getElementById('finish-early-btn');
 const earlyBonusSpan = document.getElementById('early-bonus');
+const spinPackPanel = document.getElementById('spin-pack-panel');
+const buyPack7 = document.getElementById('buy-pack-7');
+const buyPack4 = document.getElementById('buy-pack-4');
 
+// TABS
 const tabBtns = document.querySelectorAll(".tab-btn");
 const tabs = {
   slot: document.getElementById("slot-tab"),
@@ -74,14 +90,37 @@ tabBtns.forEach(btn => {
 document.getElementById('tab-slot').classList.add('active');
 tabs.slot.classList.add('active');
 
+// --- Utility ---
 function randInt(max) { return Math.floor(Math.random() * max); }
 function pickRandom(array) { return array[randInt(array.length)]; }
 function hasCharm(effectId) { return gameState.inventory.some(c=>c.effect===effectId); }
 function charmCount(effectId) { return gameState.inventory.filter(c=>c.effect===effectId).length; }
 function getShopableCharms() { return CHARMS.filter(c => !gameState.inventory.some(inv => inv.id === c.id)); }
 
-let currentGrid = [];
+// --- Save/Load for "Continue Run" ---
+function saveState() {
+  localStorage.setItem('cloverMiniSave', JSON.stringify({
+    gameState,
+    currentGrid
+  }));
+}
+function loadState() {
+  const save = localStorage.getItem('cloverMiniSave');
+  if (save) {
+    try {
+      const data = JSON.parse(save);
+      if (data.gameState) Object.assign(gameState, data.gameState);
+      if (data.currentGrid) currentGrid = data.currentGrid;
+      return true;
+    } catch {}
+  }
+  return false;
+}
+function clearState() {
+  localStorage.removeItem('cloverMiniSave');
+}
 
+// --- Slot Mechanics ---
 function randSymbol(withWild=false) {
   let pool = [];
   SYMBOLS.forEach(s => {
@@ -98,7 +137,6 @@ function randSymbol(withWild=false) {
   }
   return symbol;
 }
-
 function drawGrid(grid, highlightCells=[]) {
   slotGrid.innerHTML = '';
   for (let r=0; r<ROWS; ++r) {
@@ -113,7 +151,6 @@ function drawGrid(grid, highlightCells=[]) {
     }
   }
 }
-
 async function animateSpin() {
   slotGrid.classList.add('spinning');
   for (let i=0; i<18; ++i) {
@@ -129,7 +166,6 @@ async function animateSpin() {
   }
   slotGrid.classList.remove('spinning');
 }
-
 function detectWins(grid) {
   let wins = [];
   let visited = Array.from({ length: ROWS }, () => Array(COLS).fill(false));
@@ -166,16 +202,47 @@ function matchSymbol(a, b) {
   return a.name === b.name;
 }
 
-async function doSpin() {
+// --- Spin Pack Logic ---
+function showSpinPackPanel(show=true) {
+  spinPackPanel.style.display = show ? 'block' : 'none';
+  buyPack7.disabled = (gameState.coins < 7);
+  buyPack4.disabled = (gameState.coins < 3);
+}
+function handleSpinPackBuy(spins, cost) {
+  if (gameState.coins < cost) return;
   if (!gameState.roundActive) {
-    statusDiv.textContent = "Start the round first!";
+    // Start new round if not active
+    startRound();
+  } else if (gameState.round >= ROUNDS_PER_RUN) {
+    // Can't buy after round 3, must deposit
+    statusDiv.textContent = "Deposit coins to finish the run!";
+    return;
+  } else if (!gameState.roundJustEnded) {
+    // End current round and start new one
+    roundComplete("spinpack");
+  }
+  gameState.coins -= cost;
+  gameState.spins = spins;
+  gameState.roundJustEnded = false;
+  showSpinPackPanel(false);
+  updateUI();
+  statusDiv.textContent = `Purchased ${spins} spins for ${cost} coins.`;
+}
+buyPack7.onclick = () => handleSpinPackBuy(7, 7);
+buyPack4.onclick = () => handleSpinPackBuy(4, 3);
+
+// --- Main Spin ---
+async function doSpin() {
+  if (gameState.spins <= 0) {
+    statusDiv.textContent = "Purchase a spin pack to continue.";
+    showSpinPackPanel(true);
     return;
   }
   spinBtn.disabled = true;
   slotFeedback.textContent = "";
   await animateSpin();
 
-  // Build grid, guarantee every slot gets a symbol
+  // Build grid, always fill
   let withWild = (gameState.buff && gameState.buff.id === "wild_card") || hasCharm("wild_per_spin");
   let wildPlaced = false;
   currentGrid = [];
@@ -192,7 +259,7 @@ async function doSpin() {
   }
   drawGrid(currentGrid);
 
-  // Detect wins and payout
+  // Win detection and payout
   let wins = detectWins(currentGrid);
   let totalWin = 0, ticketEarn = 0, bonus = 0;
   let highlight = [];
@@ -242,18 +309,25 @@ async function doSpin() {
       spinBtn.disabled = false;
       statusDiv.textContent = "Extra spin from charm! (One per round)";
     }
+    gameState.spins--;
     gameState.roundSpun++;
+    if (gameState.spins <= 0) {
+      statusDiv.textContent = "Spins exhausted. Purchase more spins to continue (ends round).";
+      showSpinPackPanel(true);
+    }
     updateUI();
+    saveState();
   }, 600);
 }
 
-// --- ROUND/BUFFS/DEPOSIT ---
+// --- Round and Buffs/Deposit ---
 function resetGame() {
   gameState = {
     run: 1,
     round: 0,
     coins: STARTING_COINS,
     tickets: STARTING_TICKETS,
+    spins: 0,
     coinsDeposited: 0,
     requirement: 0,
     active: false,
@@ -268,16 +342,17 @@ function resetGame() {
     shopCharms: [],
     miracleUsed: false,
     roundSpun: 0,
+    roundJustEnded: false,
   };
   restockShop();
   updateUI();
 }
-
 function startRun() {
   gameState.active = true;
   gameState.round = 0;
   gameState.coins = STARTING_COINS;
   gameState.tickets = STARTING_TICKETS;
+  gameState.spins = 0;
   gameState.coinsDeposited = 0;
   gameState.gameOver = false;
   gameState.buff = null;
@@ -286,13 +361,13 @@ function startRun() {
   gameState.extraSpinUsed = false;
   gameState.miracleUsed = false;
   gameState.roundSpun = 0;
+  gameState.roundJustEnded = false;
   slotFeedback.textContent = "";
   startBtn.disabled = true;
   gameOverScreen.style.display = 'none';
   restockShop();
   updateUI();
 }
-
 function startRound() {
   if (!gameState.active || gameState.gameOver) return;
   gameState.round++;
@@ -304,11 +379,11 @@ function startRound() {
   gameState.doubleDepositPending = false;
   gameState.extraSpinUsed = false;
   gameState.roundSpun = 0;
+  gameState.roundJustEnded = false;
   slotFeedback.textContent = "";
   showPhoneCall();
   updateUI();
 }
-
 function showPhoneCall() {
   let buffs = BUFFS.slice();
   let options = [];
@@ -335,7 +410,6 @@ function selectBuff(buff) {
   statusDiv.textContent = `Round ${gameState.round} started! Buff: ${buff.label}`;
   updateUI();
 }
-
 function makeDeposit() {
   const amt = parseInt(depositAmount.value, 10);
   if (isNaN(amt) || amt <= 0) {
@@ -364,11 +438,7 @@ function checkRoundCompletion() {
     roundComplete("deposit");
   }
 }
-
-// --- EARLY FINISH ---
 function getEarlyFinishBonus() {
-  // If you didn't spin at all: 12 tickets
-  // After 1 spin: 8, after 2: 4, after 3+: 0
   if (gameState.roundSpun === 0) return 12;
   if (gameState.roundSpun === 1) return 8;
   if (gameState.roundSpun === 2) return 4;
@@ -386,30 +456,28 @@ function finishEarly() {
     roundComplete("early");
   }
 }
-
 function roundComplete(reason) {
+  if (gameState.roundJustEnded) return; // Prevent double
+  gameState.roundJustEnded = true;
   let msg = `Round ${gameState.round} complete! `;
-  if (reason === "early") {
-    msg += `Finished early.`;
-  }
+  if (reason === "early") msg += `Finished early.`;
   // Always +1 ticket at end of round
   gameState.tickets += 1;
   msg += " +1 ticket!";
   statusDiv.textContent = msg;
   gameState.roundActive = false;
+  gameState.spins = 0;
   slotFeedback.textContent = "";
   if (gameState.round >= ROUNDS_PER_RUN) {
-    statusDiv.textContent = '🎉 You finished all rounds of this run!';
-    gameOverScreen.style.display = 'block';
-    gameState.active = false;
-    startBtn.disabled = false;
+    statusDiv.textContent = 'Deposit coins to finish the run!';
+    showSpinPackPanel(false);
+    // Prevent further spin pack purchases until deposit
+  } else {
+    showSpinPackPanel(true);
   }
   updateUI();
 }
 
-// SHOP, INVENTORY, UI, GAME OVER: identical to previous version, not repeated here for brevity
-
-// --- SHOP ---
 function restockShop() {
   let shopable = getShopableCharms();
   let picks = [];
@@ -465,8 +533,6 @@ function renderShop() {
     shopList.appendChild(div);
   });
 }
-
-// --- INVENTORY ---
 function renderInventory() {
   charmInventory.innerHTML = "";
   if (gameState.inventory.length === 0) {
@@ -479,22 +545,31 @@ function renderInventory() {
     charmInventory.appendChild(li);
   });
 }
-
-// --- UI UPDATE ---
 function updateUI() {
   runNumber.textContent = gameState.run;
   roundNumber.textContent = gameState.round || '-';
   coinBalance.textContent = gameState.coins;
   ticketBalance.textContent = gameState.tickets;
+  spinsLeft.textContent = gameState.spins;
   coinRequirement.textContent = gameState.requirement || '-';
   coinsDeposited.textContent = gameState.coinsDeposited;
   activeBuff.textContent = gameState.buffDesc ? `Buff: ${gameState.buffDesc}` : '';
   renderInventory();
   renderShop();
   updateEarlyBonus();
+  // Show/hide spin pack panel
+  spinBtn.disabled = (gameState.spins <= 0);
+  if (gameState.roundActive && gameState.spins <= 0 && gameState.round < ROUNDS_PER_RUN) {
+    showSpinPackPanel(true);
+  } else {
+    showSpinPackPanel(false);
+  }
+  // After round 3, disable spin packs until deposit is made
+  if (!gameState.roundActive && gameState.round >= ROUNDS_PER_RUN) {
+    showSpinPackPanel(false);
+    spinBtn.disabled = true;
+  }
 }
-
-// --- GAME OVER HANDLING ---
 function gameOver() {
   gameState.gameOver = true;
   gameState.active = false;
@@ -506,57 +581,10 @@ function restart() {
   startRun();
 }
 
-spinBtn.addEventListener('click', doSpin);
-startBtn.addEventListener('click', () => {
-  startRun(); startRound();
-});
-restockBtn.addEventListener('click', restockShopBtn);
-makeDepositBtn.addEventListener('click', makeDeposit);
-finishEarlyBtn.addEventListener('click', finishEarly);
-restartBtn.addEventListener('click', restart);
-window.onclick = function(event) {
-  if (event.target === phoneCallModal) phoneCallModal.style.display = "none";
-};
-depositAmount.addEventListener('keydown', function(e) {
-  if (e.key === "Enter") makeDeposit();
-});
-
-// --- INIT ---
-resetGame();
-drawGrid(Array.from({length: ROWS}, ()=>Array.from({length: COLS}, randSymbol)));
-// ... Insert SYMBOLS, BUFFS, CHARMS arrays exactly as before ...
-
-// --- rest of gameState and functions as before ---
-
 // Entry Modal Logic
 const entryModal = document.getElementById('entry-modal');
 const continueBtn = document.getElementById('continue-btn');
 const newrunBtn = document.getElementById('newrun-btn');
-
-// Save/load to localStorage for "Continue Run"
-function saveState() {
-  localStorage.setItem('crypticSlotSave', JSON.stringify({
-    gameState,
-    currentGrid
-  }));
-}
-function loadState() {
-  const save = localStorage.getItem('crypticSlotSave');
-  if (save) {
-    try {
-      const data = JSON.parse(save);
-      if (data.gameState) Object.assign(gameState, data.gameState);
-      if (data.currentGrid) currentGrid = data.currentGrid;
-      return true;
-    } catch {}
-  }
-  return false;
-}
-function clearState() {
-  localStorage.removeItem('crypticSlotSave');
-}
-
-// Show entry modal on load
 window.addEventListener('DOMContentLoaded', () => {
   entryModal.style.display = "block";
   continueBtn.onclick = () => {
@@ -575,23 +603,22 @@ window.addEventListener('DOMContentLoaded', () => {
   };
 });
 
-// Patch all state-changing actions to save
-function patchSave(fn) {
-  return (...args) => {
-    const res = fn(...args);
-    saveState();
-    return res;
-  };
-}
+// Keyboard: Enter in deposit box
+depositAmount.addEventListener('keydown', function(e) {
+  if (e.key === "Enter") makeDeposit();
+});
+spinBtn.addEventListener('click', doSpin);
+startBtn.addEventListener('click', () => {
+  startRun(); showSpinPackPanel(true);
+});
+restockBtn.addEventListener('click', restockShopBtn);
+makeDepositBtn.addEventListener('click', makeDeposit);
+finishEarlyBtn.addEventListener('click', finishEarly);
+restartBtn.addEventListener('click', restart);
+window.onclick = function(event) {
+  if (event.target === phoneCallModal) phoneCallModal.style.display = "none";
+};
 
-// Patch all major actions
-startRun = patchSave(startRun);
-resetGame = patchSave(resetGame);
-doSpin = patchSave(doSpin);
-makeDeposit = patchSave(makeDeposit);
-finishEarly = patchSave(finishEarly);
-roundComplete = patchSave(roundComplete);
-restockShopBtn = patchSave(restockShopBtn);
-
-// All other functions as before (drawGrid, animateSpin, detectWins, etc)
-// ... (No changes needed for cryptic style, just be sure to call updateUI, saveState as above)
+// --- INIT ---
+drawGrid(Array.from({length: ROWS}, ()=>Array.from({length: COLS}, randSymbol)));
+resetGame();
