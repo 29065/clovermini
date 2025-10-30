@@ -1,60 +1,125 @@
+/* GENERAL BODY STYLING */
 body {
-  font-family: Arial, sans-serif;
-  background: #e0ffe0;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  padding: 20px;
+    margin: 0;
+    padding: 0;
+    font-family: 'Courier New', Courier, monospace;
+    background-color: #0a0a0a;
+    color: #0ff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    min-height: 100vh;
+    overflow-x: hidden;
 }
 
-#game-container {
-  width: 320px;
-  background: #fff;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.3);
+/* HEADER / HUD */
+#hud {
+    margin: 20px 0;
+    text-align: center;
+    font-size: 1.2rem;
 }
 
-h1 {
-  text-align: center;
-  margin-bottom: 10px;
+#message {
+    margin-top: 10px;
+    color: #ff0;
+    font-weight: bold;
 }
 
-#status div {
-  margin: 5px 0;
+/* SLOTS CONTAINER */
+#slots {
+    display: grid;
+    grid-template-rows: repeat(3, 100px);
+    grid-template-columns: repeat(5, 100px);
+    gap: 10px;
+    margin-bottom: 20px;
+    position: relative;
 }
 
-#slot-canvas {
-  background: #222;
-  display: block;
-  margin: 10px auto;
-  border-radius: 10px;
+/* INDIVIDUAL SLOTS */
+.slot {
+    background-color: #111;
+    border: 2px solid #0ff;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    transition: transform 0.3s, box-shadow 0.3s;
+    user-select: none;
 }
 
-#controls, #spin-packs, #deposit-panel, #shop-panel {
-  margin-top: 10px;
-  text-align: center;
+/* SPINNING ANIMATION */
+@keyframes spinAnim {
+    0% { transform: translateY(-100%) rotateX(0deg); opacity: 0; }
+    50% { transform: translateY(0%) rotateX(180deg); opacity: 1; }
+    100% { transform: translateY(0%) rotateX(360deg); opacity: 1; }
 }
 
-#controls button, #spin-packs button, #deposit-panel button, #shop-panel button {
-  margin: 5px;
-  padding: 8px 12px;
-  border: none;
-  border-radius: 5px;
-  background: #4CAF50;
-  color: white;
-  cursor: pointer;
+.slot.spinning {
+    animation: spinAnim 0.5s ease-in-out;
 }
 
-#controls button:hover, #spin-packs button:hover, #deposit-panel button:hover, #shop-panel button:hover {
-  background: #45a049;
+/* WINNING SLOT HIGHLIGHT */
+.slot.winning {
+    box-shadow: 0 0 20px 5px #0ff, 0 0 40px 10px #0ff inset;
+    animation: glow 1s infinite alternate;
 }
 
-#shop-panel ul {
-  list-style: none;
-  padding: 0;
+@keyframes glow {
+    from { box-shadow: 0 0 15px 3px #0ff, 0 0 30px 5px #0ff inset; }
+    to { box-shadow: 0 0 25px 8px #0ff, 0 0 50px 10px #0ff inset; }
 }
 
-#shop-panel li {
-  margin: 5px 0;
+/* JACKPOT SYMBOL EFFECT */
+.slot.winning.jackpot {
+    color: #ff0;
+    text-shadow: 0 0 10px #ff0, 0 0 20px #ff0, 0 0 40px #ff0;
+    animation: jackpotGlow 1s infinite alternate;
+}
+
+@keyframes jackpotGlow {
+    0% { transform: scale(1); text-shadow: 0 0 15px #ff0, 0 0 25px #ff0; }
+    50% { transform: scale(1.2); text-shadow: 0 0 25px #ff0, 0 0 50px #ff0; }
+    100% { transform: scale(1); text-shadow: 0 0 15px #ff0, 0 0 25px #ff0; }
+}
+
+/* BUTTONS */
+button {
+    background-color: #111;
+    border: 2px solid #0ff;
+    color: #0ff;
+    padding: 10px 20px;
+    font-size: 1.1rem;
+    border-radius: 8px;
+    margin: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+button:hover {
+    background-color: #0ff;
+    color: #111;
+    box-shadow: 0 0 20px #0ff;
+}
+
+/* LINES CANVAS */
+#lineCanvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    z-index: 5;
+}
+
+/* COIN FLOAT ANIMATION */
+.coin {
+    position: absolute;
+    font-size: 1.5rem;
+    animation: floatUp 1s ease-out forwards;
+}
+
+@keyframes floatUp {
+    0% { opacity: 1; transform: translateY(0); }
+    100% { opacity: 0; transform: translateY(-50px); }
 }
