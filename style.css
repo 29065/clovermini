@@ -1,97 +1,217 @@
 body {
-  font-family: Arial, sans-serif;
-  padding: 2em;
-  background: #f0f0f8;
+  font-family: 'Segoe UI', 'Arial', sans-serif;
+  background: linear-gradient(120deg, #f8e7a6 0%, #e3d5fa 100%);
+  margin: 0;
+  min-height: 100vh;
 }
 #game {
-  max-width: 480px;
-  margin: auto;
-  background: white;
-  border-radius: 10px;
-  box-shadow: 0 2px 12px #aaa;
-  padding: 2em;
+  width: 98vw;
+  max-width: 700px;
+  margin: 2.5em auto;
+  background: #fffbe9e0;
+  border-radius: 19px;
+  box-shadow: 0 4px 32px #a68cf733, 0 1.5px 0 #f7e27b;
+  padding: 2.3em 2.5em 1.3em 2.5em;
+}
+header {
+  text-align: center;
+  margin-bottom: 1.2em;
+}
+h1 {
+  font-size: 2.4em;
+  margin-bottom: 0.3em;
+  font-family: 'Segoe UI', 'Arial', sans-serif;
+  color: #7c5ab0;
+  letter-spacing: 2px;
+  text-shadow: 1px 1px 0 #fff8, 2px 2px 0 #d1c7ee;
 }
 .tabs {
   display: flex;
-  justify-content: space-between;
-  margin-bottom: 1em;
+  justify-content: center;
+  margin: 1em 0 0.6em 0;
 }
 .tab-btn {
   flex: 1;
+  margin: 0 0.3em;
   padding: 0.7em 0;
-  background: #eee;
+  background: #ffe9ad;
   border: none;
-  border-bottom: 3px solid transparent;
+  border-radius: 11px 11px 0 0;
+  font-size: 1.13em;
+  font-weight: bold;
+  color: #6e4d88;
+  box-shadow: 0 1.5px 0 #fff5, 0 1.5px 0 #f7e27b inset;
+  transition: background 0.2s, color 0.2s;
   cursor: pointer;
-  font-size: 1.1em;
-  border-radius: 8px 8px 0 0;
-  margin-right: 4px;
-  transition: background 0.2s, border-color 0.2s;
+  letter-spacing: 1px;
 }
-.tab-btn.active {
-  background: #f7f7d7;
+.tab-btn.active, .tab-btn:focus {
+  background: #f8e7a6;
+  color: #a873f7;
   border-bottom: 3px solid #cfcf5a;
-}
-.tab {
-  display: none;
-}
-.tab.active {
-  display: block;
+  outline: none;
 }
 #balances {
   display: flex;
   justify-content: space-between;
   margin-bottom: 0.5em;
   font-weight: bold;
+  font-size: 1.08em;
+  color: #8b7cb1;
 }
-#slot-machine {
-  margin-top: 1em;
-  margin-bottom: 1em;
-  min-height: 2em;
-}
-#slot-symbols {
-  font-size: 2em;
-  letter-spacing: 1em;
-  margin-bottom: 0.5em;
-}
-#slot-result {
-  margin: 0.5em 0;
-  font-weight: bold;
-}
-#deposit-section {
-  margin: 1em 0;
-}
-#game-over {
+#status {
   text-align: center;
-  color: #c00;
+  min-height: 1.7em;
+  margin-bottom: 0.5em;
+  color: #b06b2f;
+  font-size: 1.06em;
+}
+
+.tab {
+  display: none;
+  margin-top: 0.5em;
+}
+.tab.active {
+  display: flex;
+  flex-direction: row;
+  gap: 2em;
+}
+.slot-main {
+  flex: 1 1 370px;
+  min-width: 340px;
+}
+.inventory {
+  flex: 0 0 170px;
+  background: #f3f0f9;
+  border-radius: 13px;
+  box-shadow: 0 0.5px 0 #e2d1fc inset;
+  padding: 1em 1.2em;
+  margin-top: 0.5em;
+}
+.inventory h3 {
+  font-size: 1.15em;
+  color: #7c5ab0;
+  margin-bottom: 0.4em;
+}
+#charm-inventory {
+  font-size: 1em;
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+}
+#charm-inventory li {
+  background: #ede2fd;
+  border-radius: 7px;
+  margin-bottom: 0.35em;
+  padding: 0.5em;
+  color: #5b376c;
+  font-size: 0.97em;
+}
+
+.slot-container {
+  margin: 1em 0 1.2em 0;
+  background: #f5f2ff;
+  border-radius: 16px;
+  padding: 0.8em 0.7em;
+  box-shadow: 0 1.5px 0 #f7e27b inset;
+  display: flex;
+  justify-content: center;
+}
+.slot-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 54px);
+  grid-template-rows: repeat(3, 54px);
+  gap: 7px;
+}
+.slot-cell {
+  width: 54px;
+  height: 54px;
+  background: #fffbe5;
+  border: 2.5px solid #e2e2a1;
+  border-radius: 11px;
+  font-size: 2.1em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: border 0.22s, background 0.22s;
+  box-shadow: 0 1px 0 #f7e27b inset;
+  cursor: pointer;
+  user-select: none;
+}
+.slot-cell.win {
+  background: #ffe77a;
+  border: 3.5px solid #c39e11;
+  animation: blink 0.75s linear 2;
+}
+@keyframes blink {
+  0%,100% { background: #ffe77a; }
+  50% { background: #fffbe5; }
+}
+.spinning .slot-cell {
+  opacity: 0.45;
+}
+#slot-feedback {
+  min-height: 2em;
+  font-size: 1.2em;
+  font-weight: bold;
+  margin-top: 0.7em;
+  color: #8b7cb1;
 }
 #active-buff {
-  margin-top: 0.5em;
+  margin-top: 0.4em;
+  font-size: 1.04em;
+  font-weight: bold;
+  color: #0e7c5a;
+}
+
+#shop-tab {
+  flex-direction: column;
+  align-items: stretch;
+  min-width: 340px;
+}
+#shop-controls {
+  text-align: right;
+  margin-bottom: 0.5em;
+}
+#restock-btn {
+  background: #e6e674;
+  border: none;
+  border-radius: 7px;
   font-size: 1em;
+  cursor: pointer;
+  padding: 0.5em 1.1em;
+  margin-left: 1em;
+  transition: background 0.13s;
+  color: #8e5a17;
   font-weight: bold;
 }
-#inventory {
-  margin-top: 1em;
-}
-#inventory ul {
-  list-style-type: disc;
-  padding-left: 1.5em;
+#restock-btn:disabled {
+  background: #e0e0e0;
+  color: #999;
+  cursor: not-allowed;
 }
 #shop-list {
-  margin-top: 1em;
+  margin-top: 0.5em;
 }
 .shop-charm {
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  margin: 0.5em 0;
+  border: 1.5px solid #ddd;
+  border-radius: 10px;
+  margin: 0.6em 0;
   padding: 0.8em;
   background: #f9f9f9;
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  position: relative;
+  box-shadow: 0 1px 0 #f7e27b inset;
+}
+.shop-charm .icon {
+  font-size: 2.1em;
+  margin-right: 0.7em;
+  flex: 0 0 38px;
 }
 .shop-charm .info {
   flex: 2;
+  color: #6b5078;
 }
 .shop-charm .buy-btn {
   background: #e6e674;
@@ -99,13 +219,73 @@ body {
   border-radius: 7px;
   font-size: 1em;
   cursor: pointer;
-  padding: 0.5em 1em;
+  padding: 0.5em 1.1em;
   margin-left: 1em;
+  transition: background 0.1s;
+  color: #8e5a17;
+  font-weight: bold;
 }
 .shop-charm .buy-btn:disabled {
-  background: #ccc;
+  background: #e0e0e0;
+  color: #999;
   cursor: not-allowed;
 }
+#shop-message {
+  text-align: center;
+  color: #7c5ab0;
+  min-height: 1.8em;
+  font-size: 1.04em;
+}
+
+#deposit-tab {
+  flex-direction: column;
+  align-items: stretch;
+  min-width: 340px;
+  font-size: 1.08em;
+}
+#deposit-section {
+  margin: 1em 0;
+}
+#deposit-section input[type=number] {
+  font-size: 1em;
+  margin-right: 0.5em;
+  border-radius: 7px;
+  border: 1.5px solid #cfcf5a;
+  padding: 0.4em;
+  width: 120px;
+  background: #fffbe9;
+}
+#deposit-section button {
+  background: #d6c8f7;
+  border: none;
+  padding: 0.5em 1.2em;
+  border-radius: 6px;
+  font-size: 1em;
+  color: #4d306c;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+#game-over {
+  text-align: center;
+  color: #c00;
+  margin-top: 2em;
+}
+#game-over h2 {
+  font-size: 2em;
+  margin-bottom: 0.8em;
+}
+#restart {
+  background: #a873f7;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 1.2em;
+  padding: 0.7em 2em;
+  cursor: pointer;
+  margin-top: 1em;
+}
+
 .modal {
   display: none;
   position: fixed;
@@ -116,7 +296,7 @@ body {
 .modal-content {
   background: white;
   color: #222;
-  border-radius: 10px;
+  border-radius: 14px;
   margin: 10vh auto;
   padding: 2em;
   max-width: 320px;

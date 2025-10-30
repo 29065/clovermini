@@ -2,48 +2,55 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Coin & Ticket Game</title>
+  <title>✨ Lucky Lines Slot Game ✨</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="https://em-content.zobj.net/source/microsoft-teams/363/slot-machine_1f3b0.png">
 </head>
 <body>
   <div id="game">
-    <h1>Coin & Ticket Game</h1>
-    <div class="tabs">
-      <button class="tab-btn" id="tab-slot" data-tab="slot">Slot</button>
-      <button class="tab-btn" id="tab-shop" data-tab="shop">Shop</button>
-      <button class="tab-btn" id="tab-deposit" data-tab="deposit">Deposit</button>
-    </div>
-    <div id="balances">
-      <span>Coins: <span id="coin-balance">0</span></span>
-      <span>Tickets: <span id="ticket-balance">0</span></span>
-      <span>Run: <span id="run-number">1</span></span>
-      <span>Round: <span id="round-number">-</span>/3</span>
-    </div>
+    <header>
+      <h1>🎰 Lucky Lines</h1>
+      <nav class="tabs">
+        <button class="tab-btn" id="tab-slot" data-tab="slot">Slot</button>
+        <button class="tab-btn" id="tab-shop" data-tab="shop">Shop</button>
+        <button class="tab-btn" id="tab-deposit" data-tab="deposit">Deposit</button>
+      </nav>
+      <div id="balances">
+        <span>Coins: <span id="coin-balance">0</span></span>
+        <span>Tickets: <span id="ticket-balance">0</span></span>
+        <span>Run: <span id="run-number">1</span></span>
+        <span>Round: <span id="round-number">-</span>/3</span>
+      </div>
+    </header>
     <div id="status"></div>
-
     <!-- SLOT TAB -->
-    <div class="tab" id="slot-tab">
-      <button id="start-run">Start New Run</button>
-      <button id="play-slot" disabled>Play Slot Machine</button>
-      <div id="slot-machine">
-        <div id="slot-symbols"></div>
-        <div id="slot-result"></div>
-      </div>
-      <div id="active-buff" style="color:green"></div>
-      <div id="inventory">
-        <h3>Charms</h3>
+    <main class="tab" id="slot-tab">
+      <section class="slot-main">
+        <div class="slot-container">
+          <div id="slot-grid" class="slot-grid"></div>
+        </div>
+        <button id="spin-btn">Spin</button>
+        <button id="start-run">Start New Run</button>
+        <div id="slot-feedback"></div>
+        <div id="active-buff"></div>
+      </section>
+      <aside class="inventory">
+        <h3>🎁 Charms</h3>
         <ul id="charm-inventory"></ul>
-      </div>
-    </div>
+      </aside>
+    </main>
     <!-- SHOP TAB -->
-    <div class="tab" id="shop-tab">
+    <main class="tab" id="shop-tab">
       <h2>Charm Shop</h2>
+      <div id="shop-controls">
+        <button id="restock-btn">Restock (<span id="restock-cost">2</span> tickets)</button>
+      </div>
       <div id="shop-list"></div>
       <div id="shop-message"></div>
-    </div>
+    </main>
     <!-- DEPOSIT TAB -->
-    <div class="tab" id="deposit-tab">
+    <main class="tab" id="deposit-tab">
       <h2>Deposit to Meet Deadline</h2>
       <p>Required to deposit: <span id="coin-requirement">-</span></p>
       <p>Deposited this round: <span id="coins-deposited">0</span></p>
@@ -51,15 +58,16 @@
         <input type="number" id="deposit-amount" min="1" placeholder="Amount to deposit">
         <button id="make-deposit">Deposit</button>
       </div>
-    </div>
+    </main>
     <div id="game-over" style="display:none;">
       <h2>Game Over!</h2>
       <button id="restart">Restart</button>
     </div>
   </div>
+  <!-- PHONE CALL BUFF MODAL -->
   <div id="phone-call-modal" class="modal">
     <div class="modal-content">
-      <h2>Phone Call!</h2>
+      <h2>☎️ Phone Call!</h2>
       <p>You have a call. Choose a buff for this round:</p>
       <div id="buff-options"></div>
     </div>
