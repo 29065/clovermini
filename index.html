@@ -1,107 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>⸸ CloverMini ⸸</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <link rel="stylesheet" href="style.css">
-  <link rel="icon" href="https://em-content.zobj.net/source/microsoft-teams/363/shamrock_2618-fe0f.png">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clover Mini Slot</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div id="game">
-    <header>
-      <h1 class="logo-glitch">⸸ CloverMini ⸸</h1>
-      <nav class="tabs">
-        <button class="tab-btn" id="tab-slot" data-tab="slot">Slot</button>
-        <button class="tab-btn" id="tab-shop" data-tab="shop">Shop</button>
-        <button class="tab-btn" id="tab-deposit" data-tab="deposit">Deposit</button>
-      </nav>
-      <div id="balances">
-        <span>Coins: <span id="coin-balance">0</span></span>
-        <span>Tickets: <span id="ticket-balance">0</span></span>
-        <span>Spins: <span id="spins-left">0</span></span>
-        <span>Run: <span id="run-number">1</span></span>
-        <span>Round: <span id="round-number">-</span>/3</span>
-      </div>
-    </header>
-    <div id="status"></div>
-    <!-- SLOT TAB -->
-    <main class="tab" id="slot-tab">
-      <section class="slot-main">
-        <div class="slot-cabinet rundown">
-          <div class="slot-header">
-            <span class="slot-title neon-flicker">CLOVERMINI</span>
-            <span class="slot-lights rundown-flicker"></span>
-          </div>
-          <div class="slot-window">
-            <div id="slot-grid" class="slot-grid"></div>
-            <div class="slot-glass-fx"></div>
-            <div id="spin-pack-panel" class="spin-pack-panel">
-              <div class="spin-pack-desc">Purchase spins to play:</div>
-              <button id="buy-pack-7" class="spin-pack-btn">7 spins <span class="pack-cost">7c</span></button>
-              <button id="buy-pack-4" class="spin-pack-btn">4 spins <span class="pack-cost">3c</span></button>
-            </div>
-          </div>
-          <div class="slot-controls">
-            <button id="spin-btn" class="slot-spin-btn">Spin</button>
-            <button id="start-run" class="slot-run-btn">New Run</button>
-          </div>
-        </div>
-        <div id="slot-feedback"></div>
-        <div id="active-buff"></div>
-      </section>
-      <aside class="inventory">
-        <h3>☽ Charms ☾</h3>
-        <ul id="charm-inventory"></ul>
-      </aside>
-    </main>
-    <!-- SHOP TAB -->
-    <main class="tab" id="shop-tab">
-      <h2>Charm Shop</h2>
-      <div id="shop-controls">
-        <button id="restock-btn">Restock (<span id="restock-cost">2</span> tickets)</button>
-      </div>
-      <div id="shop-list"></div>
-      <div id="shop-message"></div>
-    </main>
-    <!-- DEPOSIT TAB -->
-    <main class="tab" id="deposit-tab">
-      <h2>Deposit to Meet Deadline</h2>
-      <p>Required to deposit: <span id="coin-requirement">-</span></p>
-      <p>Deposited this round: <span id="coins-deposited">0</span></p>
-      <div id="deposit-section">
-        <input type="number" id="deposit-amount" min="1" placeholder="Amount to deposit">
-        <button id="make-deposit">Deposit</button>
-      </div>
-      <div id="early-complete">
-        <button id="finish-early-btn">Finish Round Early</button>
-        <span id="early-bonus"></span>
-      </div>
-    </main>
-    <div id="game-over" style="display:none;">
-      <h2>Game Over!</h2>
-      <button id="restart">Restart</button>
-    </div>
+
+<div id="game-container">
+  <h1>Clover Mini Slot 🍀</h1>
+
+  <div id="status">
+    <div>Run: <span id="run-number">1</span></div>
+    <div>Round: <span id="round-number">1</span></div>
+    <div>Coins: <span id="coin-balance">0</span></div>
+    <div>Spins: <span id="spins-left">0</span></div>
+    <div id="slot-feedback">Welcome!</div>
   </div>
-  <!-- ENTRY MODAL -->
-  <div id="entry-modal" class="modal cryptic-modal">
-    <div class="modal-content cryptic-modal-content">
-      <h2 class="neon-flicker">⸸ Will you gamble again? ⸸</h2>
-      <p class="cryptic-text">The machine hums in the darkness.<br>Do you wish to <span class="neon-flicker">continue</span> your fate, or <span class="neon-flicker">begin anew</span>?</p>
-      <div style="margin-top:1.6em">
-        <button id="continue-btn" class="cryptic-btn">Continue Run</button>
-        <button id="newrun-btn" class="cryptic-btn">Start New Run</button>
-      </div>
-    </div>
+
+  <canvas id="slot-canvas" width="300" height="200"></canvas>
+
+  <div id="controls">
+    <button id="spin-btn">Spin 🎰</button>
+    <button id="start-btn">Start Run</button>
+    <button id="finish-early-btn" disabled>Finish Early</button>
+    <button id="restart-btn">Restart</button>
   </div>
-  <!-- PHONE CALL BUFF MODAL -->
-  <div id="phone-call-modal" class="modal">
-    <div class="modal-content">
-      <h2>☎️ Phone Call!</h2>
-      <p>You have a call. Choose a buff for this round:</p>
-      <div id="buff-options"></div>
-    </div>
+
+  <div id="spin-packs">
+    <button id="buy-pack7">Buy 7 Spins (5 coins)</button>
+    <button id="buy-pack4">Buy 4 Spins (3 coins)</button>
   </div>
-  <script src="app.js"></script>
+
+  <div id="deposit-panel">
+    <input type="number" id="deposit-amount" placeholder="Deposit coins">
+    <button id="make-deposit-btn">Deposit</button>
+    <div>Deposited: <span id="coins-deposited">0</span> / <span id="coin-requirement">10</span></div>
+  </div>
+
+  <div id="shop-panel">
+    <h2>Shop 🛒</h2>
+    <ul id="shop-list"></ul>
+    <div>Your Charms: <span id="charm-inventory"></span></div>
+    <div>Restock Spins: <button id="restock-btn">Restock (Cost: <span id="restock-cost">3</span>)</button></div>
+  </div>
+
+  <div id="buff-panel">
+    <h2>Active Buff</h2>
+    <div id="active-buff">None</div>
+  </div>
+</div>
+
+<!-- Audio -->
+<audio id="coin-sound" src="coin.mp3"></audio>
+<audio id="reel-stop-sound" src="reel-stop.mp3"></audio>
+
+<script src="app.js"></script>
 </body>
 </html>
