@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>✨ Lucky Lines Slot Machine ✨</title>
+  <title>⸸ Cryptic Slot ⸸</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <link rel="stylesheet" href="style.css">
   <link rel="icon" href="https://em-content.zobj.net/source/microsoft-teams/363/slot-machine_1f3b0.png">
@@ -10,7 +10,7 @@
 <body>
   <div id="game">
     <header>
-      <h1>🎰 Lucky Lines</h1>
+      <h1 class="logo-glitch">⸸ Cryptic Slot ⸸</h1>
       <nav class="tabs">
         <button class="tab-btn" id="tab-slot" data-tab="slot">Slot</button>
         <button class="tab-btn" id="tab-shop" data-tab="shop">Shop</button>
@@ -27,13 +27,14 @@
     <!-- SLOT TAB -->
     <main class="tab" id="slot-tab">
       <section class="slot-main">
-        <div class="slot-cabinet">
+        <div class="slot-cabinet rundown">
           <div class="slot-header">
-            <span class="slot-title">LUCKY LINES</span>
-            <span class="slot-lights"></span>
+            <span class="slot-title neon-flicker">CRYPTIC LINES</span>
+            <span class="slot-lights rundown-flicker"></span>
           </div>
           <div class="slot-window">
             <div id="slot-grid" class="slot-grid"></div>
+            <div class="slot-glass-fx"></div>
           </div>
           <div class="slot-controls">
             <button id="spin-btn" class="slot-spin-btn">Spin</button>
@@ -44,7 +45,7 @@
         <div id="active-buff"></div>
       </section>
       <aside class="inventory">
-        <h3>🎁 Charms</h3>
+        <h3>☽ Charms ☾</h3>
         <ul id="charm-inventory"></ul>
       </aside>
     </main>
@@ -74,6 +75,17 @@
     <div id="game-over" style="display:none;">
       <h2>Game Over!</h2>
       <button id="restart">Restart</button>
+    </div>
+  </div>
+  <!-- ENTRY MODAL -->
+  <div id="entry-modal" class="modal cryptic-modal">
+    <div class="modal-content cryptic-modal-content">
+      <h2 class="neon-flicker">⸸ Will you gamble again? ⸸</h2>
+      <p class="cryptic-text">The machine hums in the darkness.<br>Do you wish to <span class="neon-flicker">continue</span> your fate, or <span class="neon-flicker">begin anew</span>?</p>
+      <div style="margin-top:1.6em">
+        <button id="continue-btn" class="cryptic-btn">Continue Run</button>
+        <button id="newrun-btn" class="cryptic-btn">Start New Run</button>
+      </div>
     </div>
   </div>
   <!-- PHONE CALL BUFF MODAL -->

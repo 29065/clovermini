@@ -524,3 +524,74 @@ depositAmount.addEventListener('keydown', function(e) {
 // --- INIT ---
 resetGame();
 drawGrid(Array.from({length: ROWS}, ()=>Array.from({length: COLS}, randSymbol)));
+// ... Insert SYMBOLS, BUFFS, CHARMS arrays exactly as before ...
+
+// --- rest of gameState and functions as before ---
+
+// Entry Modal Logic
+const entryModal = document.getElementById('entry-modal');
+const continueBtn = document.getElementById('continue-btn');
+const newrunBtn = document.getElementById('newrun-btn');
+
+// Save/load to localStorage for "Continue Run"
+function saveState() {
+  localStorage.setItem('crypticSlotSave', JSON.stringify({
+    gameState,
+    currentGrid
+  }));
+}
+function loadState() {
+  const save = localStorage.getItem('crypticSlotSave');
+  if (save) {
+    try {
+      const data = JSON.parse(save);
+      if (data.gameState) Object.assign(gameState, data.gameState);
+      if (data.currentGrid) currentGrid = data.currentGrid;
+      return true;
+    } catch {}
+  }
+  return false;
+}
+function clearState() {
+  localStorage.removeItem('crypticSlotSave');
+}
+
+// Show entry modal on load
+window.addEventListener('DOMContentLoaded', () => {
+  entryModal.style.display = "block";
+  continueBtn.onclick = () => {
+    entryModal.style.display = "none";
+    if (!loadState()) startRun();
+    updateUI();
+    drawGrid(currentGrid.length ? currentGrid : Array.from({length: 3}, ()=>Array.from({length: 5}, randSymbol)));
+  };
+  newrunBtn.onclick = () => {
+    entryModal.style.display = "none";
+    clearState();
+    resetGame();
+    startRun();
+    updateUI();
+    drawGrid(Array.from({length: 3}, ()=>Array.from({length: 5}, randSymbol)));
+  };
+});
+
+// Patch all state-changing actions to save
+function patchSave(fn) {
+  return (...args) => {
+    const res = fn(...args);
+    saveState();
+    return res;
+  };
+}
+
+// Patch all major actions
+startRun = patchSave(startRun);
+resetGame = patchSave(resetGame);
+doSpin = patchSave(doSpin);
+makeDeposit = patchSave(makeDeposit);
+finishEarly = patchSave(finishEarly);
+roundComplete = patchSave(roundComplete);
+restockShopBtn = patchSave(restockShopBtn);
+
+// All other functions as before (drawGrid, animateSpin, detectWins, etc)
+// ... (No changes needed for cryptic style, just be sure to call updateUI, saveState as above)
