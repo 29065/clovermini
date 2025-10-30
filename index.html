@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>✨ Lucky Lines Slot Game ✨</title>
+  <title>✨ Lucky Lines Slot Machine ✨</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <link rel="stylesheet" href="style.css">
   <link rel="icon" href="https://em-content.zobj.net/source/microsoft-teams/363/slot-machine_1f3b0.png">
@@ -27,11 +27,19 @@
     <!-- SLOT TAB -->
     <main class="tab" id="slot-tab">
       <section class="slot-main">
-        <div class="slot-container">
-          <div id="slot-grid" class="slot-grid"></div>
+        <div class="slot-cabinet">
+          <div class="slot-header">
+            <span class="slot-title">LUCKY LINES</span>
+            <span class="slot-lights"></span>
+          </div>
+          <div class="slot-window">
+            <div id="slot-grid" class="slot-grid"></div>
+          </div>
+          <div class="slot-controls">
+            <button id="spin-btn" class="slot-spin-btn">Spin</button>
+            <button id="start-run" class="slot-run-btn">New Run</button>
+          </div>
         </div>
-        <button id="spin-btn">Spin</button>
-        <button id="start-run">Start New Run</button>
         <div id="slot-feedback"></div>
         <div id="active-buff"></div>
       </section>
@@ -57,6 +65,10 @@
       <div id="deposit-section">
         <input type="number" id="deposit-amount" min="1" placeholder="Amount to deposit">
         <button id="make-deposit">Deposit</button>
+      </div>
+      <div id="early-complete">
+        <button id="finish-early-btn">Finish Round Early</button>
+        <span id="early-bonus"></span>
       </div>
     </main>
     <div id="game-over" style="display:none;">
