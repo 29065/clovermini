@@ -1,26 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CloverPit Clone Slot</title>
-<link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CloverPit Clone Slot</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-<div class="slot-machine">
-    <div class="reels" id="reelsContainer"></div>
-    <div class="handle" id="handle"></div>
-</div>
-
-<div class="info">
-    <div>Spins Left: <span id="spinsLeft"></span></div>
-    <div>Tickets: <span id="tickets"></span></div>
-    <div>Round: <span id="round"></span> / Deadline: <span id="deadline"></span></div>
-</div>
-
-<div class="charm-shop" id="charmShop"></div>
-
-<script type="module" src="js/main.js"></script>
+    <div class="slot-machine-container">
+        <div class="slot-machine">
+            <div class="reels" id="reels">
+                <!-- 3x5 grid -->
+                <div class="reel" id="reel0"></div>
+                <div class="reel" id="reel1"></div>
+                <div class="reel" id="reel2"></div>
+                <div class="reel" id="reel3"></div>
+                <div class="reel" id="reel4"></div>
+            </div>
+            <div class="handle" id="handle"></div>
+        </div>
+        <div class="charms-container" id="charms-container"></div>
+        <div class="info">
+            <button id="spinBtn">Spin</button>
+            <div id="balance">Balance: 1000</div>
+            <div id="win">Last Win: 0</div>
+        </div>
+    </div>
+    <script src="script.js"></script>
 </body>
 </html>
