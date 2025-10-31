@@ -17,19 +17,6 @@
         <button class="tab-btn" id="tab-deposit" data-tab="deposit">Deposit</button>
       </nav>
       <div id="balances">
-        <div id="extra-controls">
-  <button id="daily-reward-btn" class="tab-btn small-btn">Claim Daily Reward</button>
-  <button id="stats-btn" class="tab-btn small-btn">Stats</button>
-</div>
-        <button id="stats-btn" class="tab-btn">Stats</button>
-<div id="stats-panel" class="modal">
-  <div class="modal-content">
-    <h2>📊 Your Stats</h2>
-    <ul id="stats-list"></ul>
-    <button id="close-stats" class="cryptic-btn">Close</button>
-  </div>
-</div>
-        <button id="daily-reward-btn" class="tab-btn" style="margin-top:0.6em;">Claim Daily Reward</button>
         <span>Coins: <span id="coin-balance">0</span></span>
         <span>Tickets: <span id="ticket-balance">0</span></span>
         <span>Spins: <span id="spins-left">0</span></span>
@@ -37,7 +24,9 @@
         <span>Round: <span id="round-number">-</span>/3</span>
       </div>
     </header>
+
     <div id="status"></div>
+
     <!-- SLOT TAB -->
     <main class="tab" id="slot-tab">
       <section class="slot-main">
@@ -68,6 +57,7 @@
         <ul id="charm-inventory"></ul>
       </aside>
     </main>
+
     <!-- SHOP TAB -->
     <main class="tab" id="shop-tab">
       <h2>Charm Shop</h2>
@@ -77,6 +67,7 @@
       <div id="shop-list"></div>
       <div id="shop-message"></div>
     </main>
+
     <!-- DEPOSIT TAB -->
     <main class="tab" id="deposit-tab">
       <h2>Deposit to Meet Deadline</h2>
@@ -91,11 +82,13 @@
         <span id="early-bonus"></span>
       </div>
     </main>
+
     <div id="game-over" style="display:none;">
       <h2>Game Over!</h2>
       <button id="restart">Restart</button>
     </div>
   </div>
+
   <!-- ENTRY MODAL -->
   <div id="entry-modal" class="modal cryptic-modal">
     <div class="modal-content cryptic-modal-content">
@@ -107,6 +100,7 @@
       </div>
     </div>
   </div>
+
   <!-- PHONE CALL BUFF MODAL -->
   <div id="phone-call-modal" class="modal">
     <div class="modal-content">
@@ -115,6 +109,7 @@
       <div id="buff-options"></div>
     </div>
   </div>
+
   <script src="app.js"></script>
 </body>
 </html>
