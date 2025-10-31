@@ -692,4 +692,17 @@ function applyCharmEffects() {
     }
   });
 }
+const statsPanel = document.getElementById("stats-panel");
+document.getElementById("stats-btn").addEventListener("click", showStats);
+document.getElementById("close-stats").addEventListener("click", () => statsPanel.style.display = "none");
 
+function showStats() {
+  const stats = `
+    <li>Total Runs: ${gameState.run}</li>
+    <li>Total Coins: ${gameState.totalCoins || 0}</li>
+    <li>Total Spins: ${gameState.totalSpins || 0}</li>
+    <li>Charms Owned: ${gameState.charms?.length || 0}</li>
+  `;
+  document.getElementById("stats-list").innerHTML = stats;
+  statsPanel.style.display = "block";
+}
