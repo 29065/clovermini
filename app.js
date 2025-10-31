@@ -203,11 +203,18 @@ function matchSymbol(a, b) {
 }
 
 // --- Spin Pack Logic ---
-function showSpinPackPanel(show=true) {
+function showSpinPackPanel(show = true) {
   spinPackPanel.style.display = show ? 'block' : 'none';
-  buyPack7.disabled = (gameState.coins < 7);
-  buyPack4.disabled = (gameState.coins < 3);
+  // Disable if not enough coins OR player hasn't chosen a buff yet
+  const needBuff = !gameState.buff && !gameState.roundActive;
+  buyPack7.disabled = (gameState.coins < 7 || needBuff);
+  buyPack4.disabled = (gameState.coins < 3 || needBuff);
+
+  if (needBuff && show) {
+    statusDiv.textContent = "Choose a buff to begin the round before buying spins!";
+  }
 }
+
 function handleSpinPackBuy(spins, cost) {
   if (gameState.coins < cost) return;
   if (!gameState.roundActive) {
