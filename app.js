@@ -647,3 +647,28 @@ function loadGame() {
 setInterval(saveGame, 5000); // auto-save every 5s
 window.addEventListener("beforeunload", saveGame);
 window.addEventListener("DOMContentLoaded", loadGame);
+const rewardBtn = document.getElementById("daily-reward-btn");
+
+function checkDailyReward() {
+  const lastClaim = localStorage.getItem("cloverMiniDaily");
+  const today = new Date().toDateString();
+  if (lastClaim === today) {
+    rewardBtn.disabled = true;
+    rewardBtn.textContent = "Daily Claimed";
+  }
+}
+
+rewardBtn.addEventListener("click", () => {
+  const today = new Date().toDateString();
+  const bonus = Math.floor(Math.random() * 5) + 3; // 3–7 coins
+  gameState.coins += bonus;
+  statusDiv.textContent = `You received ${bonus} coins!`;
+  localStorage.setItem("cloverMiniDaily", today);
+  rewardBtn.disabled = true;
+  rewardBtn.textContent = "Daily Claimed";
+  updateUI();
+  saveGame();
+});
+
+checkDailyReward();
+
