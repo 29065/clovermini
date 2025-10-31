@@ -669,6 +669,27 @@ rewardBtn.addEventListener("click", () => {
   updateUI();
   saveGame();
 });
-
 checkDailyReward();
+const RARITIES = {
+  common: { color: "#b8b8c7", effect: "None" },
+  rare: { color: "#45ffae", effect: "Earn +1 coin per win" },
+  epic: { color: "#e652ff", effect: "Double charm drop rate" },
+  legendary: { color: "#fffc82", effect: "Chance to trigger free spin" }
+};
+
+function createCharm(name) {
+  const rarityKeys = Object.keys(RARITIES);
+  const rarity = rarityKeys[Math.floor(Math.random() * rarityKeys.length)];
+  return { name, rarity };
+}
+
+function applyCharmEffects() {
+  gameState.charms.forEach(c => {
+    if (c.rarity === "rare") gameState.coinBonus = 1;
+    if (c.rarity === "legendary" && Math.random() < 0.1) {
+      gameState.spins += 1;
+      statusDiv.textContent = "✨ Your legendary charm granted a free spin!";
+    }
+  });
+}
 
