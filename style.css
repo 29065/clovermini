@@ -1,128 +1,55 @@
-body {
-    margin: 0;
-    font-family: 'Segoe UI', sans-serif;
-    background: #111;
-    color: #fff;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
+const handle = document.getElementById('handle');
+const reels = Array.from(document.getElementsByClassName('reel'));
+const coinsEl = document.getElementById('coins');
+const multiplierEl = document.getElementById('multiplier');
+let coins = 1000;
+let multiplier = 1;
+
+// Symbols for visuals
+const symbols = ["🍀", "⭐", "💎", "🔥", "🍒", "🍀"];
+
+function createReelSymbols(reel) {
+  reel.innerHTML = '';
+  for (let i = 0; i < 3; i++) {
+    const symbol = document.createElement('div');
+    symbol.classList.add('symbol');
+    symbol.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+    reel.appendChild(symbol);
+  }
 }
 
-.game-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
+// Initial setup
+reels.forEach(createReelSymbols);
 
-.slot-machine {
-    position: relative;
-    background: #222;
-    border: 4px solid #555;
-    padding: 20px;
-    border-radius: 12px;
-}
+// Spin Animation
+handle.addEventListener('click', () => {
+  // Animate handle
+  handle.style.transform = "translateY(10px)";
+  setTimeout(() => handle.style.transform = "translateY(-50%)", 200);
 
-.reels {
-    display: flex;
-    gap: 10px;
-}
+  reels.forEach((reel, idx) => {
+    let spins = 20 + idx * 5; // staggered spins
+    let interval = setInterval(() => {
+      createReelSymbols(reel);
+      spins--;
+      if (spins <= 0) clearInterval(interval);
+    }, 50 + idx * 20);
+  });
 
-.reel {
-    width: 80px;
-    height: 240px;
-    background: #000;
-    border: 2px solid #444;
-    border-radius: 8px;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-}
+  // Update coins & multiplier visually
+  coins -= 10;
+  coinsEl.textContent = coins;
+});
 
-.symbol {
-    width: 100%;
-    height: 80px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 2em;
-    border-bottom: 1px solid #333;
-    background: #111;
-}
+// Charm shop toggle
+const charmShopBtn = document.getElementById('charmShopBtn');
+const charmShop = document.getElementById('charmShop');
+const closeShop = document.getElementById('closeShop');
 
-.handle-container {
-    position: absolute;
-    right: -60px;
-    top: 20px;
-    width: 40px;
-    height: 120px;
-    cursor: pointer;
-}
+charmShopBtn.addEventListener('click', () => {
+  charmShop.classList.remove('hidden');
+});
 
-#handle {
-    width: 100%;
-    height: 100%;
-    background: #f00;
-    border-radius: 8px;
-    transition: transform 0.2s ease-in-out;
-}
-
-.info-panel {
-    margin-top: 20px;
-    text-align: center;
-}
-
-#multiplier {
-    font-size: 1.5em;
-    margin-top: 10px;
-}
-
-/* Modal Styles */
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 100;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgba(0,0,0,0.8);
-}
-
-.modal-content {
-    background-color: #333;
-    margin: 10% auto;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 300px;
-    border-radius: 10px;
-    color: #fff;
-}
-
-.close {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    cursor: pointer;
-}
-
-.close:hover {
-    color: #fff;
-}
-
-.charm {
-    display: block;
-    margin: 10px 0;
-    padding: 8px 12px;
-    background: #555;
-    border: none;
-    color: #fff;
-    cursor: pointer;
-    border-radius: 5px;
-}
-
-.charm:hover {
-    background: #777;
-}
+closeShop.addEventListener('click', () => {
+  charmShop.classList.add('hidden');
+});
