@@ -1,144 +1,31 @@
-/* ====== CLOVERMINI STYLE ====== */
-body {
-    margin: 0;
-    font-family: 'Arial', sans-serif;
-    background: #0d0d0d;
-    color: #0ff;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    overflow: hidden;
-}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CloverPit Clone Slot</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="slot-machine">
+    <div class="reels">
+        <div class="reel" id="reel0"></div>
+        <div class="reel" id="reel1"></div>
+        <div class="reel" id="reel2"></div>
+        <div class="reel" id="reel3"></div>
+        <div class="reel" id="reel4"></div>
+    </div>
+    <div class="handle" id="handle"></div>
+</div>
 
-.game-container {
-    text-align: center;
-    position: relative;
-}
+<div class="info">
+    <div>Spins Left: <span id="spinsLeft"></span></div>
+    <div>Tickets: <span id="tickets"></span></div>
+    <div>Round: <span id="round"></span> / Deadline: <span id="deadline"></span></div>
+</div>
 
-h1 {
-    font-family: 'Courier New', monospace;
-    letter-spacing: 2px;
-    color: #0ff;
-    text-shadow: 0 0 10px #0ff;
-}
+<div class="charm-shop" id="charmShop"></div>
 
-.info {
-    margin: 10px 0;
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    align-items: center;
-}
-
-#spinBtn {
-    background: #0ff;
-    border: none;
-    padding: 10px 20px;
-    font-size: 16px;
-    cursor: pointer;
-    color: #000;
-    font-weight: bold;
-    border-radius: 5px;
-    box-shadow: 0 0 10px #0ff;
-    transition: transform 0.1s;
-}
-
-#spinBtn:hover {
-    transform: scale(1.1);
-}
-
-.slots-wrapper {
-    position: relative;
-    display: inline-block;
-    margin-top: 20px;
-}
-
-#slots {
-    display: grid;
-    grid-template-columns: repeat(5, 80px);
-    grid-template-rows: repeat(3, 80px);
-    gap: 10px;
-    background: #111;
-    padding: 10px;
-    border-radius: 10px;
-    position: relative;
-    z-index: 1;
-}
-
-.slot {
-    width: 80px;
-    height: 80px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 40px;
-    background: #222;
-    border-radius: 10px;
-    box-shadow: inset 0 0 10px #0ff33, 0 0 5px #0ff;
-    transition: all 0.3s ease;
-}
-
-.slot.spinning {
-    animation: spinAnim 0.3s infinite;
-}
-
-@keyframes spinAnim {
-    0% { transform: rotateX(0deg); }
-    50% { transform: rotateX(180deg); }
-    100% { transform: rotateX(360deg); }
-}
-
-.slot.winning {
-    box-shadow: 0 0 20px #0ff, 0 0 40px #0ff;
-    transform: scale(1.2);
-    z-index: 2;
-}
-
-.slot.jackpot {
-    color: gold;
-    text-shadow: 0 0 20px gold, 0 0 40px gold;
-    animation: jackpotGlow 1s infinite alternate;
-}
-
-@keyframes jackpotGlow {
-    0% { text-shadow: 0 0 20px gold, 0 0 40px gold; }
-    100% { text-shadow: 0 0 40px gold, 0 0 80px gold; }
-}
-
-#message {
-    margin-top: 20px;
-    font-size: 18px;
-    min-height: 24px;
-}
-
-#coins {
-    font-weight: bold;
-}
-
-#spinBtn:active {
-    transform: scale(0.95);
-}
-
-/* Canvas for lines */
-#lineCanvas {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    width: calc(5 * 80px + 4 * 10px);
-    height: calc(3 * 80px + 2 * 10px);
-    pointer-events: none;
-    z-index: 0;
-}
-
-/* Floating coins */
-.coin {
-    position: absolute;
-    font-size: 24px;
-    animation: floatUp 1s ease-out forwards;
-}
-
-@keyframes floatUp {
-    0% { opacity: 1; transform: translateY(0px) scale(1); }
-    100% { opacity: 0; transform: translateY(-100px) scale(1.5); }
-}
+<script src="script.js"></script>
+</body>
+</html>
