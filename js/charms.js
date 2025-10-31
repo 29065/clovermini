@@ -1,12 +1,16 @@
 export function initCharmShop(){
     const charmShop = document.getElementById("charmShop");
     const charmList = [
-        {id:"Lucky Cat", cost:1}, 
+        {id:"Lucky Clover", cost:2}, 
+        {id:"7️⃣ Booster", cost:3},
+        {id:"Diamond Charm", cost:5},
+        {id:"Golden Star", cost:4},
+        {id:"Cherry Bomb", cost:2},
+        {id:"Magic Lamp", cost:6},
+        {id:"Four Leaf Clover", cost:5},
+        {id:"Lucky Cat", cost:3},
         {id:"Horseshoe", cost:3},
-        {id:"Ankh", cost:2},
-        {id:"Four Leaf Clover", cost:4},
-        {id:"Gold Coin", cost:5},
-        {id:"Magic Lamp", cost:6}
+        {id:"Gold Coin", cost:4}
     ];
 
     charmList.forEach(c=>{

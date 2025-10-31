@@ -1,8 +1,7 @@
-export const symbols = ["🍋","🍒","🍀","🔔","💎","💰","7️⃣"];
-const rows = 3;
-const cols = 5;
+export const symbols = ["🍀","7️⃣","💎","🍒","⭐","🍋"];
 
 export function initGrid() {
+    const rows = 3, cols = 5;
     window.game.grid = [];
     for(let r=0;r<rows;r++){
         const row=[];
@@ -11,4 +10,8 @@ export function initGrid() {
         }
         window.game.grid.push(row);
     }
+}
+
+export function getRandomSymbol() {
+    return symbols[Math.floor(Math.random()*symbols.length)];
 }
