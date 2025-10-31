@@ -1,45 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>2D Cloverpit-Inspired Slot Machine</title>
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Polished 3x5 Slot</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div class="game-container">
-    <div class="slot-machine">
-        <div class="reels">
-            <div class="reel" id="reel0"></div>
-            <div class="reel" id="reel1"></div>
-            <div class="reel" id="reel2"></div>
-            <div class="reel" id="reel3"></div>
-            <div class="reel" id="reel4"></div>
-        </div>
-        <div class="handle-container">
-            <div id="handle"></div>
-        </div>
+  <div class="slot-machine">
+    <div class="handle" id="handle"></div>
+    <div class="reels" id="reels">
+      <!-- 3x5 Grid -->
+      <div class="reel" id="reel1"></div>
+      <div class="reel" id="reel2"></div>
+      <div class="reel" id="reel3"></div>
+      <div class="reel" id="reel4"></div>
+      <div class="reel" id="reel5"></div>
     </div>
-    <div class="info-panel">
-        <div class="coins">Coins: <span id="coinCount">1000</span></div>
-        <button id="openCharmShop">Charm Shop</button>
-        <div id="multiplier">x1</div>
+    <div class="ui">
+      <div class="coins">Coins: <span id="coins">1000</span></div>
+      <div class="multiplier">Multiplier: <span id="multiplier">1x</span></div>
     </div>
-</div>
+  </div>
 
-<!-- Charm Shop Modal -->
-<div id="charmShopModal" class="modal">
-    <div class="modal-content">
-        <span class="close">&times;</span>
-        <h2>Charm Shop</h2>
-        <div class="charms">
-            <button class="charm" data-effect="multiplier" data-cost="200">Multiplier Charm (200)</button>
-            <button class="charm" data-effect="autospin" data-cost="300">Auto-Spin Charm (300)</button>
-            <button class="charm" data-effect="extraSpin" data-cost="150">Extra Spin Charm (150)</button>
-        </div>
+  <button id="charmShopBtn">Charm Shop</button>
+  <div id="charmShop" class="charm-shop hidden">
+    <h2>Charm Shop</h2>
+    <div class="charms">
+      <div class="charm">Charm 1</div>
+      <div class="charm">Charm 2</div>
+      <div class="charm">Charm 3</div>
     </div>
-</div>
+    <button id="closeShop">Close</button>
+  </div>
 
-<script src="script.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
