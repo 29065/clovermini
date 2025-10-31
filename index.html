@@ -1,61 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Slot Machine Game</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2D Cloverpit-Inspired Slot Machine</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header>
-    <h1>Slot Machine Adventure</h1>
-    <div class="balances">
-      <span>Balance: $<span id="balance">1000</span></span>
-      <span>Spins: <span id="spin-balance">0</span></span>
+<div class="game-container">
+    <div class="slot-machine">
+        <div class="reels">
+            <div class="reel" id="reel0"></div>
+            <div class="reel" id="reel1"></div>
+            <div class="reel" id="reel2"></div>
+            <div class="reel" id="reel3"></div>
+            <div class="reel" id="reel4"></div>
+        </div>
+        <div class="handle-container">
+            <div id="handle"></div>
+        </div>
     </div>
-  </header>
-
-  <!-- TABS -->
-  <div class="tabs">
-    <button class="tab-btn active" data-tab="slot-tab">Slots</button>
-    <button class="tab-btn" data-tab="inventory-tab">Inventory</button>
-    <button class="tab-btn" data-tab="cryptic-tab">Cryptic</button>
-  </div>
-
-  <!-- TAB CONTENT -->
-  <div class="tab-content">
-    <!-- Slots Tab -->
-    <div class="tab active" id="slot-tab">
-      <div class="slot-grid"></div>
-      <div class="slot-controls">
-        <button id="slot-spin-btn" class="slot-spin-btn">Spin</button>
-        <button id="slot-run-btn" class="slot-run-btn">Run 5 Spins</button>
-        <button id="spin-pack-btn" class="spin-pack-btn">Buy Spin Pack ($200)</button>
-      </div>
+    <div class="info-panel">
+        <div class="coins">Coins: <span id="coinCount">1000</span></div>
+        <button id="openCharmShop">Charm Shop</button>
+        <div id="multiplier">x1</div>
     </div>
+</div>
 
-    <!-- Inventory Tab -->
-    <div class="tab" id="inventory-tab">
-      <h2>Inventory</h2>
-      <ul id="inventory-list"></ul>
-    </div>
-
-    <!-- Cryptic Tab -->
-    <div class="tab" id="cryptic-tab">
-      <h2>Cryptic Phone</h2>
-      <button id="cryptic-btn">Receive Phone Call</button>
-    </div>
-  </div>
-
-  <!-- Modal -->
-  <div id="cryptic-modal" class="modal">
+<!-- Charm Shop Modal -->
+<div id="charmShopModal" class="modal">
     <div class="modal-content">
-      <span id="cryptic-close" class="modal-close">&times;</span>
-      <h3>Cryptic Message</h3>
-      <p>A mysterious voice whispers secrets of bonus rewards...</p>
+        <span class="close">&times;</span>
+        <h2>Charm Shop</h2>
+        <div class="charms">
+            <button class="charm" data-effect="multiplier" data-cost="200">Multiplier Charm (200)</button>
+            <button class="charm" data-effect="autospin" data-cost="300">Auto-Spin Charm (300)</button>
+            <button class="charm" data-effect="extraSpin" data-cost="150">Extra Spin Charm (150)</button>
+        </div>
     </div>
-  </div>
+</div>
 
-  <script src="app.js"></script>
+<script src="script.js"></script>
 </body>
 </html>
