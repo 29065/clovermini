@@ -629,3 +629,21 @@ window.onclick = function(event) {
 // --- INIT ---
 drawGrid(Array.from({length: ROWS}, ()=>Array.from({length: COLS}, randSymbol)));
 resetGame();
+function saveGame() {
+  localStorage.setItem("cloverMiniSave", JSON.stringify(gameState));
+}
+
+function loadGame() {
+  const save = localStorage.getItem("cloverMiniSave");
+  if (save) {
+    Object.assign(gameState, JSON.parse(save));
+    updateUI();
+    drawGrid();
+    statusDiv.textContent = "Progress loaded!";
+  }
+}
+
+// call saveGame() whenever major changes occur
+setInterval(saveGame, 5000); // auto-save every 5s
+window.addEventListener("beforeunload", saveGame);
+window.addEventListener("DOMContentLoaded", loadGame);
