@@ -1,200 +1,116 @@
-// -------------------------
-// ELEMENTS
-// -------------------------
-const tabs = document.querySelectorAll('.tab-btn');
-const tabContents = document.querySelectorAll('.tab');
-const balanceEl = document.getElementById('balance');
-const spinBalanceEl = document.getElementById('spin-balance');
-const slotGrid = document.querySelector('.slot-grid');
-const slotSpinBtn = document.querySelector('.slot-spin-btn');
-const slotRunBtn = document.querySelector('.slot-run-btn');
-const inventoryList = document.getElementById('inventory-list');
-const spinPackBtn = document.querySelector('.spin-pack-btn');
-const modal = document.getElementById('cryptic-modal');
-const crypticCloseBtn = document.getElementById('cryptic-close');
+const reels = [...document.querySelectorAll('.reel')];
+const handle = document.getElementById('handle');
+const coinDisplay = document.getElementById('coinCount');
+const multiplierDisplay = document.getElementById('multiplier');
+let coins = 1000;
+let multiplier = 1;
 
-// -------------------------
-// STATE
-// -------------------------
-let balance = 1000;          // User money
-let spins = 0;               // Spins balance
-let inventory = [];          // Won items
-let spinCost = 50;           // Each spin costs $50
-let packCost = 200;          // Spin pack cost
-let packSpins = 5;           // Spins per pack
+// Symbols
+const symbols = ['🍀','💎','⭐','🔔','🍒','💰','🔥'];
+const symbolWeights = [20, 10, 15, 15, 25, 10, 5]; // for rarity
 
-// Items by rarity
-const items = [
-  { name: 'Copper Coin', rarity: 'common' },
-  { name: 'Silver Ring', rarity: 'rare' },
-  { name: 'Magic Scroll', rarity: 'epic' },
-  { name: 'Dragon Egg', rarity: 'legendary' }
-];
+// Charm Shop
+const charmShopBtn = document.getElementById('openCharmShop');
+const charmShopModal = document.getElementById('charmShopModal');
+const closeModal = document.querySelector('.close');
 
-// Probability weights: common > rare > epic > legendary
-const weights = {
-  common: 0.6,
-  rare: 0.25,
-  epic: 0.1,
-  legendary: 0.05
-};
+charmShopBtn.onclick = () => charmShopModal.style.display = 'block';
+closeModal.onclick = () => charmShopModal.style.display = 'none';
+window.onclick = (e) => { if(e.target === charmShopModal) charmShopModal.style.display = 'none'; }
 
-// Buffs (from phone call)
-let buffs = {
-  bonusSpin: 0,   // Extra free spins
-  doubleReward: false
-};
-
-// -------------------------
-// TAB SWITCHING
-// -------------------------
-tabs.forEach(btn => {
-  btn.addEventListener('click', () => {
-    tabs.forEach(b => b.classList.remove('active'));
-    tabContents.forEach(t => t.classList.remove('active'));
-    btn.classList.add('active');
-    document.getElementById(btn.dataset.tab).classList.add('active');
-  });
-});
-
-// -------------------------
-// HELPER FUNCTIONS
-// -------------------------
-function updateBalances() {
-  balanceEl.textContent = balance;
-  spinBalanceEl.textContent = spins;
-}
-
-function updateInventory() {
-  inventoryList.innerHTML = '';
-  inventory.forEach(item => {
-    const li = document.createElement('li');
-    li.textContent = item.name;
-    li.className = `rarity-${item.rarity}`;
-    inventoryList.appendChild(li);
-  });
-}
-
-function getRandomItem() {
-  // Select rarity by weighted chance
-  const rand = Math.random();
-  let cumulative = 0;
-  let chosenRarity = 'common';
-  for (const rarity in weights) {
-    cumulative += weights[rarity];
-    if (rand <= cumulative) {
-      chosenRarity = rarity;
-      break;
+document.querySelectorAll('.charm').forEach(button => {
+    button.onclick = () => {
+        const cost = parseInt(button.dataset.cost);
+        const effect = button.dataset.effect;
+        if(coins >= cost){
+            coins -= cost;
+            coinDisplay.textContent = coins;
+            if(effect === 'multiplier') multiplier += 1;
+            if(effect === 'autospin') autoSpin(5);
+            if(effect === 'extraSpin') spin();
+        } else alert('Not enough coins!');
     }
-  }
-  // Filter items of that rarity
-  const filtered = items.filter(i => i.rarity === chosenRarity);
-  const selected = filtered[Math.floor(Math.random() * filtered.length)];
-  return selected;
-}
-
-// -------------------------
-// SLOT MACHINE SPIN
-// -------------------------
-function spinSlots() {
-  if (spins <= 0) return alert('No spins left!');
-  spins--;
-  updateBalances();
-
-  // Clear previous
-  slotGrid.innerHTML = '';
-
-  // Generate 3x3 grid
-  const results = [];
-  for (let i = 0; i < 9; i++) {
-    const cell = document.createElement('div');
-    cell.className = 'slot-cell';
-    const item = getRandomItem();
-    results.push(item);
-    cell.textContent = item.name;
-    cell.classList.add(`rarity-${item.rarity}`);
-    slotGrid.appendChild(cell);
-  }
-
-  // Check winning pattern (middle row)
-  const middleRow = results.slice(3, 6);
-  const allSame = middleRow.every(i => i.name === middleRow[0].name);
-  if (allSame) {
-    let reward = 100;
-    if (buffs.doubleReward) reward *= 2; // Buff doubles reward
-    balance += reward;
-    inventory.push(middleRow[0]);
-    updateBalances();
-    updateInventory();
-    playSound('win');
-  } else {
-    playSound('spin');
-  }
-}
-
-// -------------------------
-// RUN MULTIPLE SPINS
-// -------------------------
-function runSpins(times) {
-  if (spins < times) return alert('Not enough spins!');
-  for (let i = 0; i < times; i++) {
-    spinSlots();
-  }
-}
-
-// -------------------------
-// BUY SPIN PACK
-// -------------------------
-function buySpinPack() {
-  if (balance < packCost) return alert('Not enough money!');
-  balance -= packCost;
-  spins += packSpins;
-  updateBalances();
-}
-
-// -------------------------
-// CRYPTIC MODAL (PHONE CALL)
-// -------------------------
-function showModal() {
-  modal.style.display = 'block';
-
-  // Apply random buff
-  const rand = Math.random();
-  if (rand < 0.5) {
-    buffs.bonusSpin += 2; // 2 free spins
-    alert('Phone call bonus: +2 free spins!');
-  } else {
-    buffs.doubleReward = true; // Double rewards
-    alert('Phone call bonus: Double rewards active for next spin!');
-  }
-}
-
-crypticCloseBtn.addEventListener('click', () => {
-  modal.style.display = 'none';
 });
 
-// -------------------------
-// SOUND EFFECTS (base64)
-// -------------------------
-const sounds = {
-  spin: new Audio('data:audio/wav;base64,UklGRh...'),  // placeholder
-  win: new Audio('data:audio/wav;base64,UklGRh...')
-};
-
-function playSound(name) {
-  if (sounds[name]) sounds[name].play();
+// Helper function to pick a weighted random symbol
+function pickSymbol() {
+    let total = symbolWeights.reduce((a,b)=>a+b,0);
+    let r = Math.random()*total;
+    for(let i=0;i<symbols.length;i++){
+        if(r < symbolWeights[i]) return symbols[i];
+        r -= symbolWeights[i];
+    }
+    return symbols[0];
 }
 
-// -------------------------
-// EVENT LISTENERS
-// -------------------------
-slotSpinBtn.addEventListener('click', spinSlots);
-slotRunBtn.addEventListener('click', () => runSpins(5));
-spinPackBtn.addEventListener('click', buySpinPack);
-document.getElementById('cryptic-btn').addEventListener('click', showModal);
+// Animate handle
+function animateHandle() {
+    handle.style.transform = 'translateY(20px)';
+    setTimeout(() => handle.style.transform = 'translateY(0px)', 200);
+}
 
-// -------------------------
-// INITIALIZE
-// -------------------------
-updateBalances();
-updateInventory();
+// Spin a single reel
+function spinReel(reel) {
+    return new Promise(resolve => {
+        const spinCount = 20 + Math.floor(Math.random()*10);
+        let symbolsHTML = '';
+        for(let i=0;i<spinCount;i++){
+            symbolsHTML += `<div class="symbol">${pickSymbol()}</div>`;
+        }
+        reel.innerHTML = symbolsHTML;
+
+        // Animate scrolling
+        reel.scrollTop = 0;
+        let step = 0;
+        let totalSteps = spinCount*80;
+        const interval = setInterval(()=>{
+            reel.scrollTop += 40;
+            step += 40;
+            if(step >= totalSteps){
+                clearInterval(interval);
+                resolve();
+            }
+        }, 50);
+    });
+}
+
+// Spin all reels
+async function spin() {
+    if(coins < 10) { alert('Not enough coins to spin!'); return; }
+    coins -= 10;
+    coinDisplay.textContent = coins;
+    animateHandle();
+    multiplierDisplay.textContent = 'x'+multiplier;
+    for(let i=0;i<reels.length;i++){
+        await spinReel(reels[i]);
+    }
+    checkWin();
+}
+
+// Auto-spin function
+function autoSpin(count) {
+    if(count <= 0) return;
+    spin();
+    setTimeout(()=>autoSpin(count-1), 1000);
+}
+
+// Check for matches (simplified horizontal only)
+function checkWin() {
+    let winCoins = 0;
+    for(let r=0;r<3;r++){
+        let rowSymbols = reels.map(reel => reel.children[r]?.textContent);
+        let counts = {};
+        rowSymbols.forEach(s=>counts[s]=(counts[s]||0)+1);
+        Object.values(counts).forEach(c=>{
+            if(c>=3) winCoins += 50 * c * multiplier;
+        });
+    }
+    if(winCoins > 0){
+        coins += winCoins;
+        coinDisplay.textContent = coins;
+        alert('You won '+winCoins+' coins!');
+    }
+}
+
+// Handle click
+handle.onclick = spin;
